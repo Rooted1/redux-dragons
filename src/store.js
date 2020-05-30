@@ -1,8 +1,34 @@
 import { createStore } from 'redux'
 import { dragons } from './dragons'
 
+const initialState = {
+    homeDragons: dragons.filter(dragon => dragon.atWar === false),
+    warDragons: dragons.filter(dragon => dragon.atWar === true)
+}
 
-export const store = null;
+const reducer = (currentState, action) => {
+
+    switch(action.type){
+        case 'SEND_TO_WAR':
+            return {
+                ...currentState,
+                warDragons: [...currentState.warDragons, action.dragon],
+                homeDragons: [...currentState.homeDragons.filter(dragon => dragon !== action.dragon) ]
+            }
+            break;
+        case 'SEND_TO_HOME':
+            return {
+                ...currentState,
+                homeDragons: [...currentState.homeDragons, action.dragon],
+                warDragons: [...currentState.warDragons.filter(dragon => dragon !== action.dragon)]
+            }
+            break;
+    }
+
+    return currentState
+}
+
+export const store = createStore(reducer, initialState);
 
 // 1. Create a Store 
 //  - It should use dev tools
@@ -18,6 +44,6 @@ export const store = null;
 //  - Create another action to send the dragon back home
 
 // Uncomment this line to make your store availible in the browser:
-// window.store = store  
+window.store = store  
 
 // Then test store.dispatch from the console to see if your reducer is working
